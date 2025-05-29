@@ -41,7 +41,7 @@ router.post('/register', async (req, res) => {
     }
 
     // Verificar se email já existe
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    const existingUser = await User.findOne({ email: email.toLowerCase().trim() });
     if (existingUser) {
       return res.status(400).json({ 
         success: false,
@@ -52,24 +52,18 @@ router.post('/register', async (req, res) => {
     // Criar novo usuário
     const user = new User({ 
       nome: nome.trim(),
-      email: email.toLowerCase(),
+      email: email.toLowerCase().trim(),
       senha,
       tipoUser 
     });
 
     await user.save();
 
-    // Retornar dados do usuário (sem a senha)
+    // Retornar dados do usuário (usando método público)
     res.status(201).json({ 
       success: true,
       message: 'Usuário criado com sucesso!',
-      user: { 
-        id: user._id, 
-        nome: user.nome, 
-        email: user.email,
-        tipoUser: user.tipoUser,
-        dataCriacao: user.dataCriacao
-      }
+      user: user.toPublicJSON()
     });
 
   } catch (error) {
@@ -80,6 +74,15 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ 
         success: false,
         error: 'Este email já está cadastrado' 
+      });
+    }
+    
+    // Tratar erros de validação do Mongoose
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(err => err.message);
+      return res.status(400).json({ 
+        success: false,
+        error: messages.join(', ')
       });
     }
     
@@ -104,7 +107,7 @@ router.post('/login', async (req, res) => {
     }
 
     // Buscar usuário
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
     if (!user) {
       return res.status(401).json({ 
         success: false,
@@ -125,13 +128,7 @@ router.post('/login', async (req, res) => {
     res.json({ 
       success: true,
       message: 'Login realizado com sucesso!',
-      user: { 
-        id: user._id, 
-        nome: user.nome, 
-        email: user.email,
-        tipoUser: user.tipoUser,
-        dataCriacao: user.dataCriacao
-      }
+      user: user.toPublicJSON()
     });
 
   } catch (error) {
@@ -143,22 +140,44 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Rota para verificar se email já existe (útil para validação em tempo real)
+// Rota para verificar se email já existe
 router.post('/check-email', async (req, res) => {
   try {
     const { email } = req.body;
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    
+    if (!email) {
+      return res.status(400).json({ 
+        success: false,
+        error: 'Email é obrigatório' 
+      });
+    }
+    
+    const existingUser = await User.findOne({ email: email.toLowerCase().trim() });
     
     res.json({ 
       success: true,
       exists: !!existingUser 
     });
   } catch (error) {
+    console.error('Erro ao verificar email:', error);
     res.status(500).json({ 
       success: false,
       error: 'Erro interno do servidor' 
     });
   }
+});
+
+// Rota para teste da API
+router.get('/test', (req, res) => {
+  res.json({ 
+    success: true,
+    message: 'Rotas de autenticação funcionando!',
+    routes: [
+      'POST /api/auth/register',
+      'POST /api/auth/login', 
+      'POST /api/auth/check-email'
+    ]
+  });
 });
 
 module.exports = router;

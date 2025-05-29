@@ -2,15 +2,37 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const UserSchema = new mongoose.Schema({
-  nome: { type: String, required: true },
-  email: { type: String, unique: true, required: true },
-  senha: { type: String, required: true },
-  tipoUser: { type: String, enum: ['organizador', 'divulgador'], required: true },
-  dataCriacao: { type: Date, default: Date.now }
+  nome: { 
+    type: String, 
+    required: true,
+    trim: true
+  },
+  email: { 
+    type: String, 
+    unique: true, 
+    required: true,
+    lowercase: true,
+    trim: true
+  },
+  senha: { 
+    type: String, 
+    required: true,
+    minlength: 6
+  },
+  tipoUser: { 
+    type: String, 
+    enum: ['organizador', 'divulgador'], 
+    required: true 
+  },
+  dataCriacao: { 
+    type: Date, 
+    default: Date.now 
+  }
 });
 
 // Hash da senha antes de salvar
 UserSchema.pre('save', async function(next) {
+  // Só faz hash se a senha foi modificada
   if (!this.isModified('senha')) return next();
   
   try {
@@ -27,16 +49,15 @@ UserSchema.methods.comparePassword = async function(candidatePassword) {
   return bcrypt.compare(candidatePassword, this.senha);
 };
 
-module.exports = mongoose.model('User', UserSchema);
-
-const mongoose = require('mongoose');
-
-const UserSchema = new mongoose.Schema({
-  nome: {String, required: true},
-  email: { type: String, unique: true, required: true },
-  senha: {String, required: true},
-  tipoUser: {type: String, enum: ['organizador', 'divulgador'], required: true},
-  dataCriacao: {type: Date, default: Date.now}
-});
+// Método para retornar dados públicos do usuário
+UserSchema.methods.toPublicJSON = function() {
+  return {
+    id: this._id,
+    nome: this.nome,
+    email: this.email,
+    tipoUser: this.tipoUser,
+    dataCriacao: this.dataCriacao
+  };
+};
 
 module.exports = mongoose.model('User', UserSchema);

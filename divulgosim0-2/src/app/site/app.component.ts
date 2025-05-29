@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService, User } from './../services/auth.service';
@@ -10,7 +10,7 @@ import { AuthService, User } from './../services/auth.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'divulgosim0-2';
   showUser: boolean = false;
   showIncognito: boolean = true;
@@ -19,7 +19,8 @@ export class AppComponent {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private elementRef: ElementRef
   ) {}
 
   ngOnInit(): void {
@@ -28,35 +29,25 @@ export class AppComponent {
     });
   }
 
-  logout(): void {
-    this.authService.logout();
-  }
-/*
-  constructor(private elementRef: ElementRef) {}
-
-  loginEvent() {
-    this.showUser = !this.showUser;
-    if (this.showUser) {
-      this.showIncognito = false;
-    }
-  }
-
-  abrirMenu() {
+  abrirMenu(): void {
     this.menuAberto = !this.menuAberto;
   }
 
-  sair() {
-    this.showIncognito = !this.showIncognito;
-    if (this.showIncognito) {
-      this.showUser = false;
-    }
+  logout(): void {
+    this.authService.logout();
+    this.menuAberto = false; // Fecha o menu ao fazer logout
   }
 
   @HostListener('document:click', ['$event'])
-  fecharMenuSeClicarFora(event: MouseEvent) {
-    const clicouDentro = this.elementRef.nativeElement.contains(event.target);
-    if (!clicouDentro) {
+  fecharMenuSeClicarFora(event: MouseEvent): void {
+    if (!this.menuAberto) return; // Se o menu já está fechado, não faz nada
+
+    const target = event.target as HTMLElement;
+    const perfilHeader = this.elementRef.nativeElement.querySelector('.perfilHeader');
+    
+    // Verifica se o clique foi fora do elemento perfilHeader (que contém o ícone e o dropdown)
+    if (perfilHeader && !perfilHeader.contains(target)) {
       this.menuAberto = false;
     }
-  }*/
+  }
 }

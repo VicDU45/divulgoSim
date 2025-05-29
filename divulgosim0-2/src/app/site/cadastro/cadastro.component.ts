@@ -125,7 +125,7 @@ import { AuthService, RegisterData } from '../../services/auth.service';
   `,
   styleUrls: ['./cadastro.component.css']
 })
-export class CadastroComponent {
+export class cadastroComponent {
   cadastroForm: FormGroup;
   isLoading = false;
   errorMessage = '';

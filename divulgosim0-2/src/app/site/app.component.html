@@ -2,7 +2,7 @@
   <div class="logoHeader">
     <img src="icon.png" alt="logo" />
   </div>
-  
+ 
   <div class="menuHeader">
     <nav>
       <ul>
@@ -12,68 +12,52 @@
       </ul>
     </nav>
   </div>
-  
+ 
   <div class="perfilHeader">
-    
-
-        <div class="nav-menu">
-          <ng-container *ngIf="!currentUser">
-            <a routerLink="/login" class="nav-link">Login</a>
-            <a routerLink="/cadastro" class="nav-link btn-primary">Cadastrar</a>
-          </ng-container>
-          
-          <ng-container *ngIf="currentUser">
-            <span class="user-welcome">Olá, {{ currentUser.nome }}!</span>
-            <a 
-              [routerLink]="currentUser.tipoUser === 'organizador' ? '/organizador' : '/divulgador'"
-              class="nav-link">
-              Dashboard
-            </a>
-            <button (click)="logout()" class="nav-link btn-logout">Sair</button>
-          </ng-container>
+    <div class="nav-menu">
+      <ng-container *ngIf="!currentUser">
+        <a routerLink="/login" class="nav-link-primary">Login</a>
+        <a routerLink="/cadastro" class="nav-link-primary">Cadastrar</a>
+      </ng-container>
+         
+      <ng-container *ngIf="currentUser">
+        <div class="icon-container3" (click)="abrirMenu()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="users-icon">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+          </svg>
         </div>
-    
-    <!--<div *ngIf="showIncognito" class="eventUs1">
-      <button (click)="loginEvent()">Entre</button>
-      <a routerLink="/cadastro" routerLinkActive="active">Cadraste-se</a>
-    </div>
-    
-    <div *ngIf="showUser" class="eventUs">
-      <div class="header-menu-item">
-        <button (click)="abrirMenu()" class="dropdown-button">
-          <div class="icon-container3">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="users-icon">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-            </svg>
-          </div>
-          <span class="user-info" title="Victoria">
-            <p class="user-name">Victoria</p>
-            <p class="user-role">Organizador</p>
-          </span>
-        </button>
-      </div>
+        <span class="user-welcome">Olá, {{ currentUser.tipoUser }} {{ currentUser.nome }}!</span>  
+      </ng-container>
     </div>
     
     <div *ngIf="menuAberto" class="dropdown-menu">
       <ul>
-        <li>Meus Dados</li>
-        <li>Meus Eventos</li>
-        <li><a (click)="sair()">Sair</a></li>
+        <li>
+          <a [routerLink]="currentUser?.tipoUser === 'organizador' ? '/organizador' : '/divulgador'" 
+             routerLinkActive="active" 
+             class="nav-link">
+            Meus Eventos
+          </a>
+        </li>
+        <li>
+          <button (click)="logout()" class="nav-link">Sair</button>
+        </li>
       </ul>
     </div>
-  </div>-->
-
+  </div>
 </header>
+
 <main>
   <router-outlet></router-outlet>
 </main>
+
 <footer>
-  <p>© 2025 Divulgação. Todos os direitos reservados.</p><br>
-  <p>Entre en Contato e siganos por nuestras redes:</p>
+  <p>© 2025 Divulgação. Todos os direitos reservados.</p>
+  <p>Entre em Contato e siga-nos por nossas redes:</p>
   <nav>
-    <a href="#">e-mail</a>
+    <a href="#">E-mail</a>
     <a href="#">Instagram</a>
-    <a href="#">whatsApp</a>
+    <a href="#">WhatsApp</a>
   </nav>
 </footer>
