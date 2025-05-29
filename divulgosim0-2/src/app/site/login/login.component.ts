@@ -33,11 +33,8 @@ import { AuthService, LoginData } from '../../services/auth.service';
         </div>
 
         <div class="form-group">
-          <div class="form-label-row">
-            <label for="senha">Senha</label>
-            <a href="/recuperar-senha">Esqueceu a senha?</a>
-          </div>
-          <input 
+  
+        <input 
             id="senha" 
             type="password"
             formControlName="senha"
@@ -77,7 +74,7 @@ import { AuthService, LoginData } from '../../services/auth.service';
   `,
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class loginComponent {
   loginForm: FormGroup;
   isLoading = false;
   errorMessage = '';
@@ -140,3 +137,8 @@ export class LoginComponent {
     }
   }
 }
+  /*      <div class="form-label-row">
+            <label for="senha">Senha</label>
+            <a href="/recuperar-senha">Esqueceu a senha?</a>
+          </div>*/
+  
